@@ -2,6 +2,7 @@
 using ShipYo.Core.Entities;
 using ShipYo.Infrastructure.Persistence;
 using ShipYo.Infrastructure.Repositories;
+using ShipYo.Tests.TestHelpers;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -10,20 +11,11 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
 {
     public class ShipYoRepositoryIntegrationTests
     {
-        private ApplicationDbContext CreateInMemoryDbContext()
-        {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase($"TestDb_{Guid.NewGuid()}") // Nome univoco per evitare conflitti
-                .Options;
-
-            return new ApplicationDbContext(options);
-        }
-
         [Fact]
-        public async Task AddEntity_ShouldAddEntityToDatabase()
+        public async Task AddEntity_ShouldSetCreatedAt_AndLeaveUpdatedAtNull()
         {
             // Arrange
-            var context = CreateInMemoryDbContext();
+            var context = InMemoryDbContextFactory.Create();
             var repository = new ShipYoRepository(context);
 
             var entity = new ShipYoEntity { Name = "Test Entity" };
@@ -34,14 +26,16 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             // Assert
             var savedEntity = await context.ShipYoEntities.FirstOrDefaultAsync(e => e.Name == "Test Entity");
             Assert.NotNull(savedEntity);
-            Assert.Equal("Test Entity", savedEntity.Name);
+            Assert.Equal("Test Entity", savedEntity!.Name);
+            Assert.True(savedEntity.CreatedAt <= DateTime.UtcNow);
+            Assert.Null(savedEntity.UpdatedAt);
         }
 
         [Fact]
         public async Task GetAllEntities_ShouldReturnAllEntities()
         {
             // Arrange
-            var context = CreateInMemoryDbContext();
+            var context = InMemoryDbContextFactory.Create();
             var repository = new ShipYoRepository(context);
 
             context.ShipYoEntities.AddRange(
@@ -62,7 +56,7 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
         public async Task GetEntityById_ShouldReturnCorrectEntity()
         {
             // Arrange
-            var context = CreateInMemoryDbContext();
+            var context = InMemoryDbContextFactory.Create();
             var repository = new ShipYoRepository(context);
 
             var entity = new ShipYoEntity { Name = "Entity 1" };
@@ -76,20 +70,24 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             Assert.NotNull(result);
             Assert.Equal(entity.Id, result!.Id);
             Assert.Equal("Entity 1", result.Name);
+            Assert.Equal(entity.CreatedAt, result.CreatedAt);
+            Assert.Equal(entity.UpdatedAt, result.UpdatedAt);
         }
 
         [Fact]
-        public async Task UpdateEntity_ShouldModifyEntityInDatabase()
+        public async Task UpdateEntity_ShouldUpdateUpdatedAt_AndKeepCreatedAtUnchanged()
         {
             // Arrange
-            var context = CreateInMemoryDbContext();
+            var context = InMemoryDbContextFactory.Create();
             var repository = new ShipYoRepository(context);
 
             var entity = new ShipYoEntity { Name = "Old Name" };
             context.ShipYoEntities.Add(entity);
             await context.SaveChangesAsync();
 
+            var originalCreatedAt = entity.CreatedAt;
             entity.Name = "Updated Name";
+            entity.UpdatedAt = DateTime.UtcNow;
 
             // Act
             await repository.UpdateAsync(entity);
@@ -98,13 +96,16 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             var updatedEntity = await context.ShipYoEntities.FirstOrDefaultAsync(e => e.Id == entity.Id);
             Assert.NotNull(updatedEntity);
             Assert.Equal("Updated Name", updatedEntity!.Name);
+            Assert.Equal(originalCreatedAt, updatedEntity.CreatedAt); // Invariato
+            Assert.NotNull(updatedEntity.UpdatedAt);
+            Assert.True(updatedEntity.UpdatedAt <= DateTime.UtcNow);
         }
 
         [Fact]
         public async Task DeleteEntity_ShouldRemoveEntityFromDatabase()
         {
             // Arrange
-            var context = CreateInMemoryDbContext();
+            var context = InMemoryDbContextFactory.Create();
             var repository = new ShipYoRepository(context);
 
             var entity = new ShipYoEntity { Name = "Entity to Delete" };
