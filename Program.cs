@@ -3,8 +3,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.WebHost.UseUrls("http://localhost:5002");
-
+if (builder.Environment.IsProduction())
+{
+    builder.WebHost.UseUrls("http://localhost:5002");
+}
 var app = builder.Build();
 
 // Middleware
@@ -16,7 +18,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "Hello ShipYo!");
+app.MapGet("/", () => "Hello ShipYo DEV!");
+app.MapGet("/shipyo", () => "Hello ShipYo! PROD");
 
 // Esegui l'app
 app.Run();
