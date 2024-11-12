@@ -17,6 +17,7 @@ namespace ShipYo.Tests.UnitTests.Services
             _service = new ShipYoService(_mockRepository.Object);
         }
 
+
         [Fact]
         public async Task GetAllEntitiesAsync_ShouldReturnEntities()
         {
@@ -29,7 +30,7 @@ namespace ShipYo.Tests.UnitTests.Services
             _mockRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(entities);
 
             // Act
-            var result = await _service.GetAllEntitiesAsync();
+            var result = await _service.GetAllAsync();
 
             // Assert
             Assert.NotNull(result);
@@ -44,7 +45,7 @@ namespace ShipYo.Tests.UnitTests.Services
             var entity = new ShipYoEntity { Name = "New Entity" };
 
             // Act
-            await _service.AddEntityAsync(entity);
+            await _service.AddAsync(entity);
 
             // Assert
             _mockRepository.Verify(repo => repo.AddAsync(It.Is<ShipYoEntity>(e => e.Name == "New Entity")), Times.Once);
@@ -58,7 +59,7 @@ namespace ShipYo.Tests.UnitTests.Services
             _mockRepository.Setup(repo => repo.GetByIdAsync(1)).ReturnsAsync(entity);
 
             // Act
-            var result = await _service.GetEntityByIdAsync(1);
+            var result = await _service.GetByIdAsync(1);
 
             // Assert
             Assert.NotNull(result);
@@ -73,7 +74,7 @@ namespace ShipYo.Tests.UnitTests.Services
             _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((ShipYoEntity?)null);
 
             // Act
-            var result = await _service.GetEntityByIdAsync(999);
+            var result = await _service.GetByIdAsync(999);
 
             // Assert
             Assert.Null(result);
@@ -86,7 +87,7 @@ namespace ShipYo.Tests.UnitTests.Services
             var entity = new ShipYoEntity { Id = 1, Name = "Updated Entity" };
 
             // Act
-            await _service.UpdateEntityAsync(entity);
+            await _service.UpdateAsync(entity);
 
             // Assert
             _mockRepository.Verify(repo => repo.UpdateAsync(It.Is<ShipYoEntity>(e => e.Id == 1 && e.Name == "Updated Entity")), Times.Once);
@@ -99,12 +100,10 @@ namespace ShipYo.Tests.UnitTests.Services
             var entityId = 1;
 
             // Act
-            await _service.DeleteEntityAsync(entityId);
+            await _service.DeleteAsync(entityId);
 
             // Assert
             _mockRepository.Verify(repo => repo.DeleteAsync(It.Is<int>(id => id == entityId)), Times.Once);
         }
-
-
     }
 }

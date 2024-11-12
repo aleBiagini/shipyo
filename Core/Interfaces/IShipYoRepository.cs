@@ -2,12 +2,8 @@
 
 namespace ShipYo.Core.Interfaces
 {
-    public interface IShipYoRepository
+    public interface IShipYoRepository : IBaseRepository<ShipYoEntity>
     {
-        Task<IEnumerable<ShipYoEntity>> GetAllAsync();
-        Task<ShipYoEntity?> GetByIdAsync(int id);
-        Task AddAsync(ShipYoEntity entity);
-        Task UpdateAsync(ShipYoEntity entity);
-        Task DeleteAsync(int id);
+      
     }
 }

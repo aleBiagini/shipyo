@@ -3,38 +3,18 @@ using ShipYo.Core.Interfaces;
 
 namespace ShipYo.Application.Services
 {
-    public class ShipYoService
+    public class ShipYoService : BaseService<ShipYoEntity>, IBaseService<ShipYoEntity>
     {
-        private readonly IShipYoRepository _repository;
-
-        public ShipYoService(IShipYoRepository repository)
+        public ShipYoService(IShipYoRepository repository) : base(repository)
         {
-            _repository = repository;
         }
 
-        public async Task<IEnumerable<ShipYoEntity>> GetAllEntitiesAsync()
+        // Metodi specifici per ShipYoEntity
+        public async Task ConfigureEntityAsync(ShipYoEntity entity)
         {
-            return await _repository.GetAllAsync();
-        }
-
-        public async Task<ShipYoEntity?> GetEntityByIdAsync(int id)
-        {
-            return await _repository.GetByIdAsync(id);
-        }
-
-        public async Task AddEntityAsync(ShipYoEntity entity)
-        {
-            await _repository.AddAsync(entity);
-        }
-
-        public async Task UpdateEntityAsync(ShipYoEntity entity)
-        {
+            // Logica specifica per configurare l'entità
+            entity.UpdatedAt = DateTime.UtcNow;
             await _repository.UpdateAsync(entity);
-        }
-
-        public async Task DeleteEntityAsync(int id)
-        {
-            await _repository.DeleteAsync(id);
         }
     }
 }

@@ -1,49 +1,17 @@
-﻿using ShipYo.Core.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using ShipYo.Core.Entities;
 using ShipYo.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using ShipYo.Infrastructure.Persistence;
+using ShipYo.Infrastructure.Repositories;
 
-namespace ShipYo.Infrastructure.Repositories
+public class ShipYoRepository : BaseRepository<ShipYoEntity>, IShipYoRepository
 {
-    public class ShipYoRepository : IShipYoRepository
+    public ShipYoRepository(ApplicationDbContext context) : base(context)
     {
-        private readonly ApplicationDbContext _context;
+    }
 
-        public ShipYoRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<IEnumerable<ShipYoEntity>> GetAllAsync()
-        {
-            return await _context.ShipYoEntities.ToListAsync();
-        }
-
-        public async Task<ShipYoEntity?> GetByIdAsync(int id)
-        {
-            return await _context.ShipYoEntities.FindAsync(id);
-        }
-
-        public async Task AddAsync(ShipYoEntity entity)
-        {
-            await _context.ShipYoEntities.AddAsync(entity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(ShipYoEntity entity)
-        {
-            _context.ShipYoEntities.Update(entity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(int id)
-        {
-            var entity = await _context.ShipYoEntities.FindAsync(id);
-            if (entity != null)
-            {
-                _context.ShipYoEntities.Remove(entity);
-                await _context.SaveChangesAsync();
-            }
-        }
+    public async Task<IEnumerable<ShipYoEntity>> GetEntitiesByNameAsync(string name)
+    {
+        return await _dbSet.Where(e => e.Name.Contains(name) && !e.IsDeleted).ToListAsync();
     }
 }
