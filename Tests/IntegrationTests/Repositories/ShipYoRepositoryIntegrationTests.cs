@@ -12,13 +12,13 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
     public class ShipYoRepositoryIntegrationTests
     {
         [Fact]
-        public async Task AddEntity_ShouldSetCreatedAt_AndLeaveUpdatedAtNull()
+        public async Task AddEntity_ShouldSetCreatedAt_AndLeaveUpdatedAtAndDeletedAtNull()
         {
             // Arrange
             var context = InMemoryDbContextFactory.Create();
             var repository = new ShipYoRepository(context);
 
-            var entity = new ShipYoEntity { Name = "Test Entity" };
+            var entity = new ShipYoEntity { Name = "Test Entity", CreatedBy = "TestUser" };
 
             // Act
             await repository.AddAsync(entity);
@@ -27,8 +27,11 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             var savedEntity = await context.ShipYoEntities.FirstOrDefaultAsync(e => e.Name == "Test Entity");
             Assert.NotNull(savedEntity);
             Assert.Equal("Test Entity", savedEntity!.Name);
+            Assert.Equal("TestUser", savedEntity.CreatedBy);
             Assert.True(savedEntity.CreatedAt <= DateTime.UtcNow);
             Assert.Null(savedEntity.UpdatedAt);
+            Assert.Null(savedEntity.DeletedAt);
+            Assert.False(savedEntity.IsDeleted);
         }
 
         [Fact]
@@ -59,7 +62,7 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             var context = InMemoryDbContextFactory.Create();
             var repository = new ShipYoRepository(context);
 
-            var entity = new ShipYoEntity { Name = "Entity 1" };
+            var entity = new ShipYoEntity { Name = "Entity 1", CreatedBy = "TestUser" };
             context.ShipYoEntities.Add(entity);
             await context.SaveChangesAsync();
 
@@ -70,6 +73,7 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             Assert.NotNull(result);
             Assert.Equal(entity.Id, result!.Id);
             Assert.Equal("Entity 1", result.Name);
+            Assert.Equal(entity.CreatedBy, result.CreatedBy);
             Assert.Equal(entity.CreatedAt, result.CreatedAt);
             Assert.Equal(entity.UpdatedAt, result.UpdatedAt);
         }
@@ -81,12 +85,14 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             var context = InMemoryDbContextFactory.Create();
             var repository = new ShipYoRepository(context);
 
-            var entity = new ShipYoEntity { Name = "Old Name" };
+            var entity = new ShipYoEntity { Name = "Old Name", CreatedBy = "TestUser" };
             context.ShipYoEntities.Add(entity);
             await context.SaveChangesAsync();
 
             var originalCreatedAt = entity.CreatedAt;
+            var originalCreatedBy = entity.CreatedBy;
             entity.Name = "Updated Name";
+            entity.UpdatedBy = "AdminUser";
             entity.UpdatedAt = DateTime.UtcNow;
 
             // Act
@@ -96,13 +102,15 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             var updatedEntity = await context.ShipYoEntities.FirstOrDefaultAsync(e => e.Id == entity.Id);
             Assert.NotNull(updatedEntity);
             Assert.Equal("Updated Name", updatedEntity!.Name);
-            Assert.Equal(originalCreatedAt, updatedEntity.CreatedAt); // Invariato
+            Assert.Equal(originalCreatedAt, updatedEntity.CreatedAt); // CreatedAt invariato
+            Assert.Equal(originalCreatedBy, updatedEntity.CreatedBy); // CreatedBy invariato
             Assert.NotNull(updatedEntity.UpdatedAt);
             Assert.True(updatedEntity.UpdatedAt <= DateTime.UtcNow);
+            Assert.Equal("AdminUser", updatedEntity.UpdatedBy);
         }
 
         [Fact]
-        public async Task DeleteEntity_ShouldRemoveEntityFromDatabase()
+        public async Task DeleteEntity_ShouldSetIsDeletedAndDeletedAt()
         {
             // Arrange
             var context = InMemoryDbContextFactory.Create();
@@ -112,12 +120,19 @@ namespace ShipYo.Tests.IntegrationTests.Repositories
             context.ShipYoEntities.Add(entity);
             await context.SaveChangesAsync();
 
+            entity.IsDeleted = true;
+            entity.DeletedAt = DateTime.UtcNow;
+            entity.DeletedBy = "AdminUser";
+
             // Act
-            await repository.DeleteAsync(entity.Id);
+            await repository.UpdateAsync(entity);
 
             // Assert
             var deletedEntity = await context.ShipYoEntities.FirstOrDefaultAsync(e => e.Id == entity.Id);
-            Assert.Null(deletedEntity);
+            Assert.NotNull(deletedEntity);
+            Assert.True(deletedEntity!.IsDeleted);
+            Assert.NotNull(deletedEntity.DeletedAt);
+            Assert.Equal("AdminUser", deletedEntity.DeletedBy);
         }
     }
 }
