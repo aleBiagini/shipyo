@@ -87,8 +87,7 @@
               "RelativeToolTip": "Tests\\ShipYoServiceTests.cs",
               "ViewState": "AQIAABAAAAAAAAAAAAAQwAwAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-12T08:38:42.098Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T08:38:42.098Z"
             },
             {
               "$type": "Document",
@@ -100,8 +99,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-12T08:34:17.281Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T08:34:17.281Z"
             },
             {
               "$type": "Document",
@@ -113,8 +111,7 @@
               "RelativeToolTip": "Application\\Services\\ShipYoService.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAACgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-12T08:33:51.024Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T08:33:51.024Z"
             },
             {
               "$type": "Document",
@@ -126,8 +123,7 @@
               "RelativeToolTip": "Infrastructure\\Repository\\ShipYoRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAADEAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-12T08:33:19.99Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T08:33:19.99Z"
             },
             {
               "$type": "Document",
@@ -139,8 +135,7 @@
               "RelativeToolTip": "Core\\Interfaces\\IShipYoRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-12T08:32:40.074Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T08:32:40.074Z"
             },
             {
               "$type": "Document",
@@ -152,8 +147,7 @@
               "RelativeToolTip": "Infrastructure\\Persistence\\ApplicationDbContext.cs",
               "ViewState": "AQIAAAYAAAAAAAAAAAAAAAcAAAArAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-12T08:31:24.802Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T08:31:24.802Z"
             },
             {
               "$type": "Document",
@@ -165,8 +159,7 @@
               "RelativeToolTip": "Core\\Entities\\ShipYoEntity.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAdAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-12T08:29:56.269Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T08:29:56.269Z"
             }
           ]
         }
