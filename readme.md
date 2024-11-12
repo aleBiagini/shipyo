@@ -17,6 +17,4 @@ graph TD
     O --> P[Test di Unit]
     O --> Q[Test di Integrazione]
     O --> R[Test Mock con Moq]
-
-
 ```
