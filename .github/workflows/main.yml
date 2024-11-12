@@ -1,0 +1,42 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x'
+
+    - name: Build .NET Application
+      run: dotnet build --configuration Release
+
+    - name: Run Tests
+      run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+
+    - name: Publish .NET Application
+      run: dotnet publish --configuration Release --output ./publish
+
+    - name: Install sshpass
+      run: sudo apt-get install sshpass
+
+    - name: Test SSH Connection
+      run: |
+        sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no root@${{ secrets.SSH_HOST }} "echo SSH connection successful"
+
+    - name: Deploy to Server
+      run: |
+        sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz ./publish/ root@${{ secrets.SSH_HOST }}:${{ secrets.SSH_PATH }}
