@@ -18,8 +18,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "Hello ShipYo DEV!");
-app.MapGet("/shipyo", () => "Hello ShipYo! PROD");
+// Servire file statici da wwwroot
+app.UseStaticFiles();
+app.MapFallbackToFile("index.html");
+
 
 // Esegui l'app
 app.Run();
